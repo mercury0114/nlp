@@ -18,5 +18,5 @@ print("Current accuracy: ", totalCorrect / len(y))
 
 
 
-bayes = Bayes()
+bayes = Bayes(4)
 bayes.Train(X, y)
