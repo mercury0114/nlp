@@ -1,18 +1,18 @@
 from re import compile, findall
 from decimal import Decimal, InvalidOperation
 
-def LongNumber(token):
+def long_number(token):
     try:
         d = Decimal(token)
         return d > 99 or d < -99 or d.as_tuple().exponent < 0
     except InvalidOperation:
         return False
 
-def ExtractTokens(original_sms):
+def extract_tokens(original_sms):
     sms = original_sms.lower()
     tokens = findall(r'[+-]*[\d]*\.*[\d]+|[a-z]+(?:[-\'][a-z]+)+|[a-z]+|[!$£]', sms)
     return ["_start_"] + [
-        "_number_" if LongNumber(token) else token for token in tokens
+        "_number_" if long_number(token) else token for token in tokens
     ] + ["_stop_"]
 
 spam_keywords = [
@@ -22,7 +22,7 @@ spam_keywords = [
 ]
 website_keywords = ["http", "www.", ".com", ".uk"]
 
-def MakeVector(original_sms):
+def make_vector(original_sms):
     sms = original_sms.lower()
     vector = [keyword in sms for keyword in spam_keywords]
     # Checking for website in sms
@@ -31,7 +31,7 @@ def MakeVector(original_sms):
     vector.append(bool(compile(".*[0-9]{5}.*").match(sms)))
     return vector
 
-def Display(sms, outcome, vector):
+def display(sms, outcome, vector):
     print(sms)
     print(outcome)
     d = {spam_keywords[i] for i in range(len(spam_keywords)) if vector[i]}
