@@ -16,10 +16,16 @@ class Interface(metaclass=abc.ABCMeta):
     def predict(self, messages):
         return [self.predict_one(sms) for sms in messages]
 
-    def get_accuracy(self, messages, labels):
-        predicted = numpy.array(self.predict(messages))
-        return (numpy.array(labels) == predicted).sum() / len(labels)
+    def accuracy(self, predicted, labels):
+        return (labels == predicted).sum() / len(labels)
 
-    def print_accuracy(self, messages, labels):
+    def sensitivity(self, predicted, labels):
+        return ((labels == predicted) * (labels == SPAM)).sum() / (labels == SPAM).sum()
+
+    def print_statistics(self, messages, labels_list):
         predicted = numpy.array(self.predict(messages))
-        print("{} accuracy: {}".format(self.name, self.get_accuracy(messages, labels)))
+        labels = numpy.array(labels_list)
+        print(self.name + " statistics")
+        print("accuracy: {}".format(self.accuracy(predicted, labels)))
+        print("sensitivity: {}".format(self.sensitivity(predicted, labels)))
+        print()
